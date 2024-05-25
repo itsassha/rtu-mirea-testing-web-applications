@@ -1,0 +1,27 @@
+version: 1.0.{build}
+
+image: Visual Studio 2019
+
+environment:
+  JDK_HOME: C:\Program Files\AdoptOpenJDK\jdk-11.0.11.9-hotspot
+
+install:
+  - ps: Install-Product -Product "OpenJDK" -Version "11"
+  - cmd: SETX JAVA_HOME "%JDK_HOME%"
+  - cmd: SETX PATH "%JAVA_HOME%\bin;%PATH%"
+  - cmd: gradlew.bat clean
+
+build_script:
+  - cmd: gradlew.bat build
+
+test_script:
+  - cmd: gradlew.bat test --info -Dselenide.headless=true
+
+cache:
+  - C:\Users\appveyor\.gradle\caches
+
+artifacts:
+  - path: build\reports\tests
+    name: Test Reports
+  - path: build\libs
+    name: Jars
